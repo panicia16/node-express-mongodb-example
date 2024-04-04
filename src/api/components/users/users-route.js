@@ -33,5 +33,5 @@ module.exports = (app) => {
   );
 
   // Delete user
-  route.delete('/:id', authenticationMiddleware, usersControllers.deleteUser);
+  route.delete('/:id', authenticationMiddleware, usersControllers.deleteUser); //coba
 };
