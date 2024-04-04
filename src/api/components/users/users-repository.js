@@ -1,4 +1,5 @@
 const { User } = require('../../../models');
+const { email } = require('../../../models/users-schema');
 
 /**
  * Get a list of users
@@ -62,10 +63,22 @@ async function deleteUser(id) {
   return User.deleteOne({ _id: id });
 }
 
+/**
+ * mengecek apakah email sudah ada atau belum
+ * @param {string} email - email
+ * @returns {Promise<boolean>}
+ */
+
+async function isEmailTaken(email) {
+  const user = await User.findOne({ email: email });
+  return user !== null && user !== undefined;
+}
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   deleteUser,
+  isEmailTaken,
 };
