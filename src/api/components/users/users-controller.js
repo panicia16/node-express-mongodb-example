@@ -88,15 +88,25 @@ async function updateUser(request, response, next) {
     const name = request.body.name;
     const email = request.body.email;
 
-    //memanggil fungi untuk mengecek apakah email sudah ada atau belum
-    const emailExists = await usersService.isEmailTaken(email);
-    if (emailExists) {
-      throw errorResponder(
-        errorTypes.EMAIL_ALREADY_TAKEN,
-        'This email already taken, try use another'
-      );
+    //dapatkan pengguna berdasarkan id untuk mengecek apakah sudah ada atau belum
+    const user = await usersService.getUser(id);
+    if (!user) {
+      throw errorResponder(errorTypes.NOT_FOUND, 'User not found');
     }
 
+    //mengecek apakah email yang di update berbeda dan sudah ada
+    if (email != user.email) {
+      const emailExists = await usersService.isEmailTaken(email);
+      if (emailExists) {
+        throw errorResponder(
+          errorTypes.EMAIL_ALREADY_TAKEN,
+          'EMAIL_ALREADY_TAKEN',
+          'This email is already taken, try using another one'
+        );
+      }
+    }
+
+    //update the user
     const success = await usersService.updateUser(id, name, email);
     if (!success) {
       throw errorResponder(

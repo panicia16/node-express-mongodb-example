@@ -90,19 +90,22 @@ async function createUser(name, email, password) {
 async function updateUser(id, name, email) {
   const user = await usersRepository.getUser(id);
 
-  //mengecek apakah email sudah ada atau belum
-  const isEmailExists = await isEmailTaken(email);
-  if (isEmailExists) {
-    throw new ErrorTypes.EMAIL_ALREADY_TAKEN(
-      'EMAIL_ALREADY_TAKEN',
-      'This email already taken, try use another'
-    );
-  }
   // User not found
   if (!user) {
     return null;
   }
 
+  //memeriksa email yang sedang diperbarui sama atau beda dengan email saat ini
+  if (email != user.email) {
+    //memeriksa email baru apakah sudah ada atau belum
+    const isEmailExists = await isEmailTaken(email);
+    if (isEmailExists) {
+      throw new ErrorTypes.EMAIL_ALREADY_TAKEN(
+        'EMAIL_ALREADY_TAKEN',
+        'This email is already taken, try using antoher one'
+      );
+    }
+  }
   try {
     await usersRepository.updateUser(id, name, email);
   } catch (err) {
