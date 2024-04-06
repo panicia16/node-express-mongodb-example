@@ -1,5 +1,6 @@
 const usersService = require('./users-service');
 const { errorResponder, errorTypes } = require('../../../core/errors');
+const { hashPassword } = require('../../../utils/password');
 
 /**
  * Handle get list of users request
@@ -50,15 +51,15 @@ async function createUser(request, response, next) {
     const name = request.body.name;
     const email = request.body.email;
     const password = request.body.password;
-    const passwordConfirm = request.body.password_confirm;
+    const password_confirm = request.body.password_confirm;
 
     //Memastikan password dan confirm pw tidak kosong
-    if (!password || !passwordConfirm) {
+    if (!password || !password_confirm) {
       throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid password');
     }
 
     //memastikan pw dan konfirmasi pw sesuai
-    if (password != passwordConfirm) {
+    if (password != password_confirm) {
       throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid password');
     }
     //memanggil fungi untuk mengecek apakah email sudah ada atau belum
