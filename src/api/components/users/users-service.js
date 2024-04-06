@@ -7,7 +7,7 @@ const { hashPassword } = require('../../../utils/password');
  * @returns {Promise<boolean>}
  */
 
-async function CheckEmailExists(email) {
+async function isEmailTaken(email) {
   return usersRepository.isEmailTaken(email);
 }
 
@@ -59,6 +59,15 @@ async function getUser(id) {
  * @returns {boolean}
  */
 async function createUser(name, email, password) {
+  //mengecek apakah email sudah ada atau belum
+  const CheckEmailExists = await isEmailTaken(email);
+  if (emailExists) {
+    throw new errorTypes.ConflictError(
+      'EMAIL_ALREADY_TAKEN',
+      'Email is alredy taken'
+    );
+  }
+
   // Hash password
   const hashedPassword = await hashPassword(password);
 
