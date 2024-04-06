@@ -56,9 +56,10 @@ async function getUser(id) {
  * @param {string} name - Name
  * @param {string} email - Email
  * @param {string} password - Password
+ * @param {string} password_confirm - password_confirm
  * @returns {boolean}
  */
-async function createUser(name, email, password) {
+async function createUser(name, email, password, password_confirm) {
   //mengecek apakah email sudah ada atau belum
   const isEmailExists = await isEmailTaken(email);
   if (isEmailExists) {

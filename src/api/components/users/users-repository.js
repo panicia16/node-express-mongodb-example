@@ -23,9 +23,10 @@ async function getUser(id) {
  * @param {string} name - Name
  * @param {string} email - Email
  * @param {string} password - Hashed password
+ * @param {string} password_confirm - password_confirm
  * @returns {Promise}
  */
-async function createUser(name, email, password) {
+async function createUser(name, email, password, password_confirm) {
   return User.create({
     name,
     email,
