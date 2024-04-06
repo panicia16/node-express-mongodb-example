@@ -30,6 +30,7 @@ async function createUser(name, email, password) {
     name,
     email,
     password,
+    password_confirm,
   });
 }
 

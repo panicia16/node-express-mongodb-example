@@ -79,6 +79,8 @@ async function createUser(request, response, next) {
         'Failed to create user'
       );
     }
+    // Hash password
+    const hashedPassword = await hashPassword(password);
 
     return response.status(200).json({ name, email });
   } catch (error) {
