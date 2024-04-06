@@ -90,6 +90,14 @@ async function createUser(name, email, password) {
 async function updateUser(id, name, email) {
   const user = await usersRepository.getUser(id);
 
+  //mengecek apakah email sudah ada atau belum
+  const isEmailExists = await isEmailTaken(email);
+  if (isEmailExists) {
+    throw new ErrorTypes.EMAIL_ALREADY_TAKEN(
+      'EMAIL_ALREADY_TAKEN',
+      'This email already taken, try use another'
+    );
+  }
   // User not found
   if (!user) {
     return null;
