@@ -60,12 +60,11 @@ async function getUser(id) {
  */
 async function createUser(name, email, password) {
   //mengecek apakah email sudah ada atau belum
-  const emailExists = await isEmailTaken(email);
-  if (emailExists) {
-    //throw digunakan utk melmeperkan sebuah error, saat error akan dilemmparkan kata email is already taken sbg pesan error
-    throw new ErrorTypes.ConflictError(
+  const isEmailExists = await isEmailTaken(email);
+  if (isEmailExists) {
+    throw new ErrorTypes.EMAIL_ALREADY_TAKEN(
       'EMAIL_ALREADY_TAKEN',
-      'Email is alredy taken'
+      'This email already taken, try use another'
     );
   }
 
