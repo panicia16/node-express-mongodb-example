@@ -164,24 +164,18 @@ async function changePassword(request, response, next) {
     const id = request.params.id;
     const { Old_Password, New_Password } = request.body;
 
-    const success = await usersService.changePassword(
-      id,
-      Old_Password,
-      New_Password
-    );
-
-    if (!success) {
-      errorResponder(
-        errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to change password'
-      );
+    //validasi bahwa old_pw sesuai dgn pw pengguna
+    const isValidPassword = await usersService.checkPassword(id, Old_Password);
+    if (!isValidPassword) {
+      return response.status(400).json({ error: 'Invalid Old Password' });
     }
 
-    return response
-      .status(200)
-      .json({ message: 'Password changed successfully' });
+    //ubah pw user
+    const updateUser = await usersService.changePassword(id, New_Password);
+
+    response.status(200).json({ message: 'Password changed successfully' });
   } catch (error) {
-    return next(error);
+    next(error);
   }
 }
 module.exports = {

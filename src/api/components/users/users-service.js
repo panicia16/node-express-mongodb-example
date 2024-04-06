@@ -1,5 +1,4 @@
 const usersRepository = require('./users-repository');
-const { hashPassword } = require('../../../utils/password');
 const { passwordMatched } = require('../../../utils/password');
 const { ErrorTypes } = require('../../../core/errors');
 /**
@@ -141,12 +140,12 @@ async function deleteUser(id) {
 
 /**
  * @param {string} id - ID Pengguna
- * @param {string} OldP_assword - Old_Password
+ * @param {string} Old_Password - Old_Password
  * @param {string} New_Password - New_Password
  * @returns {boolean}
  */
 
-async function changePassword(userId, Old_Password, New_Password) {
+async function changePassword(id, Old_Password, New_Password) {
   const user = await usersRepository.getUser(id);
 
   if (!user) {
@@ -156,7 +155,7 @@ async function changePassword(userId, Old_Password, New_Password) {
     );
   }
 
-  const passwordMatched = await passwordMatch(Old_Password, user.password);
+  const passwordMatch = await passwordMatch(Old_Password, user.password);
   if (!passwordMatch) {
     throw new ErrorTypes.INVALID_PASSWORD(
       'INVALID_PASSWORD',
@@ -164,7 +163,7 @@ async function changePassword(userId, Old_Password, New_Password) {
     );
   }
   const hashedPassword = await hashPassword(New_Password);
-  await usersRepository.updateUser(id, { password: hashPassword });
+  await usersRepository.updateUser(id, { password: hashedPassword });
 
   return true;
 }

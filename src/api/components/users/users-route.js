@@ -37,7 +37,7 @@ module.exports = (app) => {
 
   //change password
   route.patch(
-    '/:id/change-password',
+    '/users/:id/change-password',
     authenticationMiddleware,
     celebrate(usersValidator.changePassword),
     usersControllers.changePassword

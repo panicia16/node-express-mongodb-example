@@ -79,12 +79,12 @@ async function isEmailTaken(email) {
 //membuat change pw
 /**
  * @param {string} id - ID Pengguna
- * @param {string} OldP_assword - Old_Password
+ * @param {string} Old_Password - Old_Password
  * @param {string} New_Password - New_Password
  * @returns {boolean}
  */
 
-async function changePassword(userId, Old_Password, New_Password) {
+async function changePassword(id, Old_Password, New_Password) {
   const user = await usersRepository.getUser(id);
 
   if (!user) {
@@ -94,7 +94,7 @@ async function changePassword(userId, Old_Password, New_Password) {
     );
   }
 
-  const passwordMatch = await passwordMatched(Old_Password, user.password);
+  const passwordMatch = await passwordMatched(Old_Password, hashPassword);
 
   if (!passwordMatch) {
     throw new ErrorTypes.INVALID_PASSWORD(
@@ -103,7 +103,7 @@ async function changePassword(userId, Old_Password, New_Password) {
     );
   }
   const hashedPassword = await hashPassword(New_Password);
-  await usersRepository.updateUser(userId, { password: hashPassword });
+  await usersRepository.updateUser(id, { password: hashPassword });
 
   return true;
 }

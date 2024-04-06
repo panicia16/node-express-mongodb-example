@@ -26,13 +26,13 @@ module.exports = {
 
   changePassword: {
     body: {
-      Old_Password: joi
+      Old_password: joi
         .string()
         .min(6)
         .max(32)
         .required()
-        .valid(joi.ref('password'))
-        .label('Password'),
+        .label('Old Password'),
+
       New_Password: joi
         .string()
         .min(6)
@@ -44,7 +44,7 @@ module.exports = {
         .min(6)
         .max(32)
         .required()
-        .valid(joi.ref('Old_Password'))
+        .valid(joi.ref('New_Password'))
         .label('Password Confirmation'),
     },
   },
