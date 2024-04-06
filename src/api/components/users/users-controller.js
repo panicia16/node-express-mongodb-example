@@ -50,7 +50,17 @@ async function createUser(request, response, next) {
     const name = request.body.name;
     const email = request.body.email;
     const password = request.body.password;
+    const passwordConfirm = request.body.password_confirm;
 
+    //Memastikan password dan confirm pw tidak kosong
+    if (!password || !passwordConfirm) {
+      throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid password');
+    }
+
+    //memastikan pw dan konfirmasi pw sesuai
+    if (password != passwordConfirm) {
+      throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid password');
+    }
     //memanggil fungi untuk mengecek apakah email sudah ada atau belum
     const emailExists = await usersService.isEmailTaken(email);
     if (emailExists) {
