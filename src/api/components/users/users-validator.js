@@ -23,4 +23,18 @@ module.exports = {
       email: joi.string().email().required().label('Email'),
     },
   },
+
+  changePassword: {
+    body: {
+      oldPassword: joi.string().required.label('Old Password'),
+      newPassword: joi.string().min(6).max(32).required().label('New Password'),
+      passport_confirm: joi
+        .string()
+        .min(6)
+        .max(32)
+        .required()
+        .valid(joi.ref('newPassword'))
+        .label('Password Confirmation'),
+    },
+  },
 };

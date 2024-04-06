@@ -1,5 +1,6 @@
 const usersRepository = require('./users-repository');
-const { hashPassword } = require('../../../utils/password');
+const { hashPassword, passwordMatched } = require('../../../utils/password');
+const { passwordMatched } = require('../../../utils/password');
 const { ErrorTypes } = require('../../../core/errors');
 /**
  * mengecek apakah email sudah ada atau belum
@@ -138,6 +139,33 @@ async function deleteUser(id) {
   return true;
 }
 
+/**
+ * @param {string} userId - ID Pengguna
+ * @param {string} oldPassword - Old Password
+ * @param {string} newPassword - New Password
+ * @returns {boolean}
+ */
+
+async function changePassword(userId, oldPassword, newPassword) {
+  const user = await usersRepository.getUser(userId);
+
+  if (!user) {
+    throw new ErrorTypes.USER_NOT_FOUND('USER_NOT_FOUND', 'User not found');
+  }
+
+  const passwordMatch = await passwordMatched(oldPassword, user.password);
+
+  if (!passwordMatch) {
+    throw new ErrorTypes.INVALID_PASSWORD(
+      'INVALID_PASSWORD',
+      'Old password is incorrect'
+    );
+  }
+  const hashedPassword = await hashPassword(newPassword);
+  await usersRepository.updateUser(userId, { password: hashPassword });
+
+  return true;
+}
 module.exports = {
   isEmailTaken,
   getUsers,
@@ -145,4 +173,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  changePassword,
 };

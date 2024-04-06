@@ -159,10 +159,36 @@ async function deleteUser(request, response, next) {
   }
 }
 
+async function changePassword(request, response, next) {
+  try {
+    const userId = request.params.id;
+    const { oldPassword, newPassword } = request.body;
+
+    const success = await usersService.changePassword(
+      userId,
+      oldPassword,
+      newPassword
+    );
+
+    if (!success) {
+      errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to change password'
+      );
+    }
+
+    return response
+      .status(200)
+      .json({ message: 'Password changed successfully' });
+  } catch (error) {
+    return next(error);
+  }
+}
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   deleteUser,
+  changePassword,
 };
