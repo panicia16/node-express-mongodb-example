@@ -1,5 +1,5 @@
 const joi = require('joi');
-const passport = require('passport');
+const passport_confirm = require('passport');
 
 module.exports = {
   createUser: {
@@ -7,7 +7,7 @@ module.exports = {
       name: joi.string().min(1).max(100).required().label('Name'),
       email: joi.string().email().required().label('Email'),
       password: joi.string().min(6).max(32).required().label('Password'),
-      passport_confirm: joi
+      password_confirm: joi
         .string()
         .min(6)
         .max(32)
