@@ -140,29 +140,32 @@ async function deleteUser(id) {
 }
 
 /**
- * @param {string} userId - ID Pengguna
- * @param {string} oldPassword - Old Password
- * @param {string} newPassword - New Password
+ * @param {string} id - ID Pengguna
+ * @param {string} OldP_assword - Old_Password
+ * @param {string} New_Password - New_Password
  * @returns {boolean}
  */
 
-async function changePassword(userId, oldPassword, newPassword) {
-  const user = await usersRepository.getUser(userId);
+async function changePassword(userId, Old_Password, New_Password) {
+  const user = await usersRepository.getUser(id);
 
   if (!user) {
-    throw new ErrorTypes.USER_NOT_FOUND('USER_NOT_FOUND', 'User not found');
+    throw new ErrorTypes.USER_NOT_FOUND(
+      'USER_NOT_FOUND',
+      'Empty response, not found'
+    );
   }
 
-  const passwordMatch = await passwordMatched(oldPassword, user.password);
+  const passwordMatch = await passwordMatched(Old_Password, user.password);
 
   if (!passwordMatch) {
     throw new ErrorTypes.INVALID_PASSWORD(
       'INVALID_PASSWORD',
-      'Old password is incorrect'
+      'Invalid password'
     );
   }
-  const hashedPassword = await hashPassword(newPassword);
-  await usersRepository.updateUser(userId, { password: hashPassword });
+  const hashedPassword = await hashPassword(New_Password);
+  await usersRepository.updateUser(id, { password: hashPassword });
 
   return true;
 }

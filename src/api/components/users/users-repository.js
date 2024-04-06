@@ -76,6 +76,37 @@ async function isEmailTaken(email) {
   return user !== null && user !== undefined;
 }
 
+//membuat change pw
+/**
+ * @param {string} id - ID Pengguna
+ * @param {string} OldP_assword - Old_Password
+ * @param {string} New_Password - New_Password
+ * @returns {boolean}
+ */
+
+async function changePassword(userId, Old_Password, New_Password) {
+  const user = await usersRepository.getUser(id);
+
+  if (!user) {
+    throw new ErrorTypes.USER_NOT_FOUND(
+      'USER_NOT_FOUND',
+      'Empty response, not found'
+    );
+  }
+
+  const passwordMatch = await passwordMatched(Old_Password, user.password);
+
+  if (!passwordMatch) {
+    throw new ErrorTypes.INVALID_PASSWORD(
+      'INVALID_PASSWORD',
+      'Invalid password'
+    );
+  }
+  const hashedPassword = await hashPassword(New_Password);
+  await usersRepository.updateUser(userId, { password: hashPassword });
+
+  return true;
+}
 module.exports = {
   getUsers,
   getUser,
@@ -83,4 +114,5 @@ module.exports = {
   updateUser,
   deleteUser,
   isEmailTaken,
+  changePassword,
 };

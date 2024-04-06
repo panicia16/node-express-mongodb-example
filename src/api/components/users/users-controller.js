@@ -76,7 +76,7 @@ async function createUser(request, response, next) {
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to create user'
+        'Unprocessable entity'
       );
     }
     // Hash password
@@ -104,7 +104,7 @@ async function updateUser(request, response, next) {
     //dapatkan pengguna berdasarkan id untuk mengecek apakah sudah ada atau belum
     const user = await usersService.getUser(id);
     if (!user) {
-      throw errorResponder(errorTypes.NOT_FOUND, 'User not found');
+      throw errorResponder(errorTypes.NOT_FOUND, 'Empty response, not found');
     }
 
     //mengecek apakah email yang di update berbeda dan sudah ada
@@ -124,7 +124,7 @@ async function updateUser(request, response, next) {
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to update user'
+        'Unprocessable entity'
       );
     }
 
@@ -149,7 +149,7 @@ async function deleteUser(request, response, next) {
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to delete user'
+        'Unprocessable entity'
       );
     }
 
@@ -161,13 +161,13 @@ async function deleteUser(request, response, next) {
 
 async function changePassword(request, response, next) {
   try {
-    const userId = request.params.id;
-    const { oldPassword, newPassword } = request.body;
+    const id = request.params.id;
+    const { Old_Password, New_Password } = request.body;
 
     const success = await usersService.changePassword(
-      userId,
-      oldPassword,
-      newPassword
+      id,
+      Old_Password,
+      New_Password
     );
 
     if (!success) {
