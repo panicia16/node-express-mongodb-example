@@ -51,6 +51,16 @@ async function createUser(request, response, next) {
     const email = request.body.email;
     const password = request.body.password;
 
+    //memanggil fungi untuk mengecek apakah email sudah ada atau belum
+    const emailExists = await usersService.isEmailTaken(email);
+    if (emailExists) {
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN,
+        'This email already taken, try use another'
+      );
+    }
+
+    //jika email belum ada, lanjutkan create user
     const success = await usersService.createUser(name, email, password);
     if (!success) {
       throw errorResponder(
