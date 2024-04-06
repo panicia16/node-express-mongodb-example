@@ -1,5 +1,5 @@
 const usersRepository = require('./users-repository');
-const { hashPassword, passwordMatched } = require('../../../utils/password');
+const { hashPassword } = require('../../../utils/password');
 const { passwordMatched } = require('../../../utils/password');
 const { ErrorTypes } = require('../../../core/errors');
 /**
@@ -156,8 +156,7 @@ async function changePassword(userId, Old_Password, New_Password) {
     );
   }
 
-  const passwordMatch = await passwordMatched(Old_Password, user.password);
-
+  const passwordMatched = await passwordMatch(Old_Password, user.password);
   if (!passwordMatch) {
     throw new ErrorTypes.INVALID_PASSWORD(
       'INVALID_PASSWORD',
