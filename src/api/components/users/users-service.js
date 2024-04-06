@@ -2,6 +2,16 @@ const usersRepository = require('./users-repository');
 const { hashPassword } = require('../../../utils/password');
 
 /**
+ * mengecek apakah email sudah ada atau belum
+ * @param {string} email - email
+ * @returns {Promise<boolean>}
+ */
+
+async function CheckEmailExists(email) {
+  return usersRepository.isEmailTaken(email);
+}
+
+/**
  * Get list of users
  * @returns {Array}
  */
@@ -108,6 +118,7 @@ async function deleteUser(id) {
 }
 
 module.exports = {
+  CheckEmailExists,
   getUsers,
   getUser,
   createUser,
