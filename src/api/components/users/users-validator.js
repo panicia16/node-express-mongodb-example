@@ -12,8 +12,8 @@ module.exports = {
         .min(6)
         .max(32)
         .required()
-        .valid(joi.ref('Password'))
-        .label('Password_Confirm'),
+        .valid(joi.ref('password'))
+        .label('Password Confirmation'),
     },
   },
 
