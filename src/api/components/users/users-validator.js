@@ -1,6 +1,8 @@
 const joi = require('joi');
 const passport_confirm = require('passport');
-
+const changePassword = require('joi');
+const celebrate = require('celebrate');
+const hashPassword = require('../../../utils/password');
 module.exports = {
   createUser: {
     body: {
@@ -26,12 +28,7 @@ module.exports = {
 
   changePassword: {
     body: {
-      Old_password: joi
-        .string()
-        .min(6)
-        .max(32)
-        .required()
-        .label('Old Password'),
+      Old_Password: joi.string().required(),
 
       New_Password: joi
         .string()

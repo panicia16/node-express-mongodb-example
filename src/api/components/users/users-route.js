@@ -4,7 +4,7 @@ const authenticationMiddleware = require('../../middlewares/authentication-middl
 const celebrate = require('../../../core/celebrate-wrappers');
 const usersControllers = require('./users-controller');
 const usersValidator = require('./users-validator');
-
+const usersService = require('./users-service');
 const route = express.Router();
 
 module.exports = (app) => {
@@ -37,7 +37,7 @@ module.exports = (app) => {
 
   //change password
   route.patch(
-    '/users/:id/change-password',
+    '/:id/change-password',
     authenticationMiddleware,
     celebrate(usersValidator.changePassword),
     usersControllers.changePassword

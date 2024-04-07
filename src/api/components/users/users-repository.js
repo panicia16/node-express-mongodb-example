@@ -1,6 +1,8 @@
+const { errorTypes } = require('../../../core/errors');
 const { User } = require('../../../models');
-const { email } = require('../../../models/users-schema');
-
+const { email, password } = require('../../../models/users-schema');
+const { passwordMatched, hashPassword } = require('../../../utils/password');
+const bcrypt = require('bcrypt');
 /**
  * Get a list of users
  * @returns {Promise}
@@ -81,32 +83,36 @@ async function isEmailTaken(email) {
  * @param {string} id - ID Pengguna
  * @param {string} Old_Password - Old_Password
  * @param {string} New_Password - New_Password
+ * @param {string} password_confirm - Konfirmasi pasword baru
  * @returns {boolean}
  */
-
-async function changePassword(id, Old_Password, New_Password) {
-  const user = await usersRepository.getUser(id);
+async function changePassword(
+  id,
+  Old_Password,
+  New_Password,
+  password_confirm
+) {
+  const user = await User.findById(id);
 
   if (!user) {
-    throw new ErrorTypes.USER_NOT_FOUND(
-      'USER_NOT_FOUND',
-      'Empty response, not found'
-    );
+    throw new errorTypes.USER_NOT_FOUND();
+    'USER_NOT_FOUND', 'Empety response, not found';
   }
 
-  const passwordMatch = await passwordMatched(Old_Password, hashPassword);
+  //mengecek apakah old pw sama dngn pw hash di db
+  const isPasswordMatch = await bcrypt.compare(Old_Password, user.password);
 
-  if (!passwordMatch) {
-    throw new ErrorTypes.INVALID_PASSWORD(
-      'INVALID_PASSWORD',
-      'Invalid password'
-    );
+  if (!isPasswordMatch) {
+    throw new errorTypes.USER_NOT_FOUND();
+    'USER_NOT_FOUND', 'Empety response, not found';
   }
-  const hashedPassword = await hashPassword(New_Password);
-  await usersRepository.updateUser(id, { password: hashPassword });
 
+  //hash new pw sebelum di update ke db
+  const hashedPassword = await bcrypt.hash(New_Password, 10);
+  await updateUser(id, { password: hashedPassword });
   return true;
 }
+
 module.exports = {
   getUsers,
   getUser,

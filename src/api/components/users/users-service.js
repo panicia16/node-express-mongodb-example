@@ -1,6 +1,8 @@
 const usersRepository = require('./users-repository');
-const { passwordMatched } = require('../../../utils/password');
 const { ErrorTypes } = require('../../../core/errors');
+const { hashPassword, passwordMatched } = require('../../../utils/password');
+const { User } = require('../../../models');
+
 /**
  * mengecek apakah email sudah ada atau belum
  * @param {string} email - email
@@ -142,10 +144,16 @@ async function deleteUser(id) {
  * @param {string} id - ID Pengguna
  * @param {string} Old_Password - Old_Password
  * @param {string} New_Password - New_Password
+ * @param {string} password_confirm - Konfirmasi pasword baru
  * @returns {boolean}
  */
 
-async function changePassword(id, Old_Password, New_Password) {
+async function changePassword(
+  id,
+  Old_Password,
+  New_Password,
+  password_confirm
+) {
   const user = await usersRepository.getUser(id);
 
   if (!user) {
@@ -155,11 +163,19 @@ async function changePassword(id, Old_Password, New_Password) {
     );
   }
 
-  const passwordMatch = await passwordMatch(Old_Password, user.password);
-  if (!passwordMatch) {
+  const isPasswordMatch = await passwordMatched(Old_Password, user.password);
+  if (!isPasswordMatch) {
     throw new ErrorTypes.INVALID_PASSWORD(
-      'INVALID_PASSWORD',
+      'INVALID_PASSWORD_ERROR',
       'Invalid password'
+    );
+  }
+
+  //memastikan pw baru dan konfirmasi pw sesuai
+  if (New_Password !== password_confirm) {
+    throw new ErrorTypes.INVALID_PASSWORD(
+      'INVALID_PASSWORD_ERROR',
+      'Password dan Konsfirmasi Password tidak sama'
     );
   }
   const hashedPassword = await hashPassword(New_Password);
@@ -167,6 +183,7 @@ async function changePassword(id, Old_Password, New_Password) {
 
   return true;
 }
+
 module.exports = {
   isEmailTaken,
   getUsers,

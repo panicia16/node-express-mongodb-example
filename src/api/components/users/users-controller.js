@@ -159,23 +159,40 @@ async function deleteUser(request, response, next) {
   }
 }
 
+//mengubah pw user
+
 async function changePassword(request, response, next) {
   try {
     const id = request.params.id;
-    const { Old_Password, New_Password } = request.body;
+    const Old_Password = request.body.Old_Password;
+    const New_Password = request.body.New_Password;
+    const password_confirm = request.body.password_confirm;
 
-    //validasi bahwa old_pw sesuai dgn pw pengguna
-    const isValidPassword = await usersService.checkPassword(id, Old_Password);
-    if (!isValidPassword) {
-      return response.status(400).json({ error: 'Invalid Old Password' });
+    //Memastikan password baru dan confirm pw tidak kosong
+    if (!New_Password || !password_confirm) {
+      throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid password');
     }
 
-    //ubah pw user
-    const updateUser = await usersService.changePassword(id, New_Password);
+    //memastikan pw baru dan konfirmasi pw sesuai
+    if (New_Password != password_confirm) {
+      throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid password');
+    }
 
-    response.status(200).json({ message: 'Password changed successfully' });
+    //memanggil fungsi change pw dari users Service
+    const passwordChange = await usersService.changePassword(
+      id,
+      Old_Password,
+      New_Password,
+      password_confirm
+    );
+
+    if (passwordChange) {
+      response.status(200).json({ message: 'Password changed successfully' });
+    } else {
+      response.status(500).json({ error: 'Failed to change password' });
+    }
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 module.exports = {
