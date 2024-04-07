@@ -1,4 +1,4 @@
-const { errorTypes } = require('../../../core/errors');
+const errorTypes = require('../../../core/errors');
 const { User } = require('../../../models');
 const { email, password } = require('../../../models/users-schema');
 const { passwordMatched, hashPassword } = require('../../../utils/password');
@@ -78,6 +78,28 @@ async function isEmailTaken(email) {
   return user !== null && user !== undefined;
 }
 
+//membuat fungsi updatePassword utk mengubah pw pengguna
+/**
+ * Update password for a user
+ * @param {string} id - User Id
+ * @param {string} New_Password - New Password
+ * @returns {Promise<boolean>}
+ */
+
+async function updatePassword(id, New_Password) {
+  try {
+    const user = await User.findByIdAndUpdate(id, { password: New_Password });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return true;
+  } catch (error) {
+    //menghandle error jika terjadi kesalahan dalam mengubah pw
+    console.error('Error updating password', error);
+    return false;
+  }
+}
+
 //membuat change pw
 /**
  * @param {string} id - ID Pengguna
@@ -121,4 +143,5 @@ module.exports = {
   deleteUser,
   isEmailTaken,
   changePassword,
+  updatePassword,
 };

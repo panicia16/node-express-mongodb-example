@@ -1,7 +1,7 @@
 const joi = require('joi');
 const passport_confirm = require('passport');
 const changePassword = require('joi');
-const celebrate = require('celebrate');
+const isCelebrateError = require('celebrate');
 const hashPassword = require('../../../utils/password');
 module.exports = {
   createUser: {

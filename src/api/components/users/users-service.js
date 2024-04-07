@@ -1,5 +1,5 @@
 const usersRepository = require('./users-repository');
-const { ErrorTypes } = require('../../../core/errors');
+const errorTypes = require('../../../core/errors');
 const { hashPassword, passwordMatched } = require('../../../utils/password');
 const { User } = require('../../../models');
 
@@ -65,7 +65,7 @@ async function createUser(name, email, password, password_confirm) {
   //mengecek apakah email sudah ada atau belum
   const isEmailExists = await isEmailTaken(email);
   if (isEmailExists) {
-    throw new ErrorTypes.EMAIL_ALREADY_TAKEN(
+    throw new errorTypes.EMAIL_ALREADY_TAKEN(
       'EMAIL_ALREADY_TAKEN',
       'This email already taken, try use another'
     );
@@ -103,7 +103,7 @@ async function updateUser(id, name, email) {
     //memeriksa email baru apakah sudah ada atau belum
     const isEmailExists = await isEmailTaken(email);
     if (isEmailExists) {
-      throw new ErrorTypes.EMAIL_ALREADY_TAKEN(
+      throw new errorTypes.EMAIL_ALREADY_TAKEN(
         'EMAIL_ALREADY_TAKEN',
         'This email is already taken, try using antoher one'
       );
@@ -140,6 +140,8 @@ async function deleteUser(id) {
   return true;
 }
 
+//CHANGE PW
+
 /**
  * @param {string} id - ID Pengguna
  * @param {string} Old_Password - Old_Password
@@ -147,6 +149,29 @@ async function deleteUser(id) {
  * @param {string} password_confirm - Konfirmasi pasword baru
  * @returns {boolean}
  */
+
+//UPDATE PASSWORD
+//membuat fungsi updatePassword utk mengubah pw pengguna
+/**
+ * Update password for a user
+ * @param {string} id - User Id
+ * @param {string} New_Password - New Password
+ * @returns {Promise<boolean>}
+ */
+
+async function updatePassword(id, New_Password) {
+  try {
+    const user = await User.findByIdAndUpdate(id, { password: New_Password });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return true;
+  } catch (error) {
+    //menghandle error jika terjadi kesalahan dalam mengubah pw
+    console.error('Error updating password', error);
+    return false;
+  }
+}
 
 async function changePassword(
   id,
@@ -157,7 +182,7 @@ async function changePassword(
   const user = await usersRepository.getUser(id);
 
   if (!user) {
-    throw new ErrorTypes.USER_NOT_FOUND(
+    throw new errorTypes.USER_NOT_FOUND(
       'USER_NOT_FOUND',
       'Empty response, not found'
     );
@@ -165,21 +190,22 @@ async function changePassword(
 
   const isPasswordMatch = await passwordMatched(Old_Password, user.password);
   if (!isPasswordMatch) {
-    throw new ErrorTypes.INVALID_PASSWORD(
+    throw new errorTypes.INVALID_PASSWORD(
       'INVALID_PASSWORD_ERROR',
-      'Invalid password'
+      'The old password entered is incorrect. Please try again.'
     );
   }
 
   //memastikan pw baru dan konfirmasi pw sesuai
   if (New_Password !== password_confirm) {
-    throw new ErrorTypes.INVALID_PASSWORD(
+    throw new errorTypes.INVALID_PASSWORD(
       'INVALID_PASSWORD_ERROR',
-      'Password dan Konsfirmasi Password tidak sama'
+      'The old password entered is incorrect. Please try again.'
     );
   }
+
   const hashedPassword = await hashPassword(New_Password);
-  await usersRepository.updateUser(id, { password: hashedPassword });
+  await usersRepository.updatePassword(id, { password: hashedPassword });
 
   return true;
 }
@@ -192,4 +218,5 @@ module.exports = {
   updateUser,
   deleteUser,
   changePassword,
+  updatePassword,
 };
